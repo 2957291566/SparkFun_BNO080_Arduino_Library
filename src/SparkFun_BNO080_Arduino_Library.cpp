@@ -70,7 +70,7 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
   _spiPort = &spiPort;
   _spiPortSpeed = spiPortSpeed;
   if(_spiPortSpeed > 3000000) _spiPortSpeed = 3000000; //BNO080 max is 3MHz
-  
+
   _cs = user_CSPin;
   _wake = user_WAKPin;
   _int = user_INTPin;
@@ -150,7 +150,7 @@ bool BNO080::dataAvailable(void)
       parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
       return (true);
     }
-	
+
   }
   return (false);
 }
@@ -179,7 +179,7 @@ void BNO080::parseCommandReport(void)
   {
 	  //The BNO080 responds with this report to command requests. It's up to use to remember which command we issued.
 	  uint8_t command = shtpData[2]; //This is the Command byte of the response
-	  
+
 	  if(command == COMMAND_ME_CALIBRATE)
 	  {
 		calibrationStatus = shtpData[4 + 0]; //R0 - Status (0 = success, non-zero = fail)
@@ -293,7 +293,7 @@ void BNO080::parseInputReport(void)
 	  Serial.println("!");
 	  //The BNO080 responds with this report to command requests. It's up to use to remember which command we issued.
 	  uint8_t command = shtpData[5 + 2]; //This is the Command byte of the response
-	  
+
 	  if(command == COMMAND_ME_CALIBRATE)
 	  {
 		Serial.println("ME Cal report found!");
@@ -859,9 +859,9 @@ void BNO080::sendCalibrateCommand(uint8_t thingToCalibrate)
     shtpData[5] = 1;
   }
   else if (thingToCalibrate == CALIBRATE_STOP) ; //Do nothing, bytes are set to zero
-  
+
   //Make the internal calStatus variable non-zero (operation failed) so that user can test while we wait
-  calibrationStatus = 1; 
+  calibrationStatus = 1;
 
   //Using this shtpData packet, send a command
   sendCommand(COMMAND_ME_CALIBRATE);
@@ -883,7 +883,7 @@ void BNO080::requestCalibrationStatus()
 
   for (uint8_t x = 3 ; x < 12 ; x++) //Clear this section of the shtpData array
     shtpData[x] = 0;
-	
+
   shtpData[6] = 0x01; //P3 - 0x01 - Subcommand: Get ME Calibration
 
   //Using this shtpData packet, send a command
@@ -930,10 +930,10 @@ boolean BNO080::waitForI2C()
 //after a hardware reset
 boolean BNO080::waitForSPI()
 {
-  for (uint8_t counter = 0 ; counter < 125 ; counter++) //Don't got more than 255
+  for (uint8_t counter = 0 ; counter < 1250 ; counter++) //Don't got more than 255
   {
     if (digitalRead(_int) == LOW) return (true);
-    delay(1);
+    delayMicroseconds(100);
   }
 
   if (_printDebug == true) _debugPort->println(F("SPI INT timeout"));
