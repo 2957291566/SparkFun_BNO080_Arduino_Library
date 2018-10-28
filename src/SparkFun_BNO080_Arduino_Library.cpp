@@ -90,7 +90,7 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
   digitalWrite(_rst, HIGH); //Bring out of reset
 
   //Wait for first assertion of INT before using WAK pin. Can take ~104ms
-  waitForSPI();
+  waitForSPI(127);
 
   //if(wakeBNO080() == false) //Bring IC out of sleep after reset
   //  Serial.println("BNO080 did not wake up");
@@ -137,7 +137,7 @@ void BNO080::enableDebugging(Stream &debugPort)
 //Returns false if new readings are not available
 bool BNO080::dataAvailable(void)
 {
-  if (receivePacket() == true)
+  if (receivePacket(0) == true)
   {
     //Check to see if this packet is a sensor reporting its data to us
     if (shtpHeader[2] == CHANNEL_REPORTS && shtpData[0] == SHTP_REPORT_BASE_TIMESTAMP)
@@ -928,12 +928,13 @@ boolean BNO080::waitForI2C()
 //Blocking wait for BNO080 to assert (pull low) the INT pin
 //indicating it's ready for comm. Can take more than 104ms
 //after a hardware reset
-boolean BNO080::waitForSPI()
+boolean BNO080::waitForSPI(int wait_ms)
 {
-  for (uint8_t counter = 0 ; counter < 1250 ; counter++) //Don't got more than 255
-  {
-    if (digitalRead(_int) == LOW) return (true);
-    delayMicroseconds(100);
+  for(int i=0; i<wait_ms;i++) {
+      if (digitalRead(_int) == LOW) {
+          return (true);
+      }
+      delay(1);
   }
 
   if (_printDebug == true) _debugPort->println(F("SPI INT timeout"));
@@ -942,11 +943,11 @@ boolean BNO080::waitForSPI()
 
 //Check to see if there is any new data available
 //Read the contents of the incoming packet into the shtpData array
-boolean BNO080::receivePacket(void)
+boolean BNO080::receivePacket(int blocking_ms)
 {
   if (_i2cPort == NULL) //Do SPI
   {
-    if (waitForSPI() == false) return (false); //Something went wrong
+    if (waitForSPI(blocking_ms) == false) return (false); //Something went wrong
 
     //Get first four bytes to find out how much data we need to read
 
@@ -1072,8 +1073,9 @@ boolean BNO080::sendPacket(uint8_t channelNumber, uint8_t dataLength)
 
   if (_i2cPort == NULL) //Do SPI
   {
+    // TODO: why do we have to wait for spi here???
     //Wait for BNO080 to indicate it is available for communication
-    if (waitForSPI() == false) return (false); //Something went wrong
+    if (waitForSPI(127) == false) return (false); //Something went wrong
 
     //BNO080 has max CLK of 3MHz, MSB first,
     //The BNO080 uses CPOL = 1 and CPHA = 1. This is mode3

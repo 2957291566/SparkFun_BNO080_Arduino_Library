@@ -146,8 +146,8 @@ class BNO080 {
     float qToFloat(int16_t fixedPointValue, uint8_t qPoint); //Given a Q value, converts fixed point floating to regular floating point number
 
     boolean waitForI2C(); //Delay based polling for I2C traffic
-    boolean waitForSPI(); //Delay based polling for INT pin to go low
-    boolean receivePacket(void);
+    boolean waitForSPI(int wait); //Delay based polling for INT pin to go low
+    boolean receivePacket(int blocking_ms=127); // block for a default of 127ms
     boolean getData(uint16_t bytesRemaining); //Given a number of bytes, send the requests in I2C_BUFFER_LENGTH chunks
     boolean sendPacket(uint8_t channelNumber, uint8_t dataLength);
     void printPacket(void); //Prints the current shtp header and data packets
