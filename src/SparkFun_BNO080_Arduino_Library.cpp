@@ -930,7 +930,7 @@ boolean BNO080::waitForI2C()
 //after a hardware reset
 boolean BNO080::waitForSPI(int wait_ms)
 {
-  for(int i=0; i<wait_ms;i++) {
+  for(int i=0; i<=wait_ms;i++) {
       if (digitalRead(_int) == LOW) {
           return (true);
       }
