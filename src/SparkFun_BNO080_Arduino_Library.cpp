@@ -232,6 +232,18 @@ void BNO080::parseInputReport(void)
 
 	timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | ((uint32_t)shtpData[3] << (8 * 2)) | ((uint32_t)shtpData[2] << (8 * 1)) | ((uint32_t)shtpData[1] << (8 * 0));
 
+	// The gyro-integrated input reports are sent via the special gyro channel and do no include the usual ID, sequence, and status fields 
+	if(shtpHeader[2] == CHANNEL_GYRO) {
+		rawQuatI = (uint16_t)shtpData[5 + 1] << 8 | shtpData[5 + 0];
+		rawQuatJ = (uint16_t)shtpData[5 + 3] << 8 | shtpData[5 + 2];
+		rawQuatK = (uint16_t)shtpData[5 + 5] << 8 | shtpData[5 + 4];
+		rawQuatReal = (uint16_t)shtpData[5 + 7] << 8 | shtpData[5 + 6];
+		rawFastGyroX = (uint16_t)shtpData[5 + 9] << 8 | shtpData[5 + 8];
+		rawFastGyroY = (uint16_t)shtpData[5 + 11] << 8 | shtpData[5 + 10];
+		rawFastGyroZ = (uint16_t)shtpData[5 + 13] << 8 | shtpData[5 + 12];
+		return;
+	}
+
 	uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
 	uint16_t data1 = (uint16_t)shtpData[5 + 5] << 8 | shtpData[5 + 4];
 	uint16_t data2 = (uint16_t)shtpData[5 + 7] << 8 | shtpData[5 + 6];
@@ -490,6 +502,27 @@ float BNO080::getMagZ()
 uint8_t BNO080::getMagAccuracy()
 {
 	return (magAccuracy);
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroX()
+{
+	float gyro = qToFloat(rawGyroAngVelX, angular_velocity_Q1);
+	return (gyro)
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroY()
+{
+	float gyro = qToFloat(rawGyroAngVelY, angular_velocity_Q1);
+	return (gyro)
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroZ()
+{
+	float gyro = qToFloat(rawGyroAngVelZ, angular_velocity_Q1);
+	return (gyro)
 }
 
 //Return the step count
@@ -791,6 +824,12 @@ void BNO080::enableGyro(uint16_t timeBetweenReports)
 void BNO080::enableMagnetometer(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_MAGNETIC_FIELD, timeBetweenReports);
+}
+
+//Sends the packet to enable the high refresh-rate gyro-integrated rotation vector
+void BNO080::enableGyroIntegratedRotationVector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR, timeBetweenReports);
 }
 
 //Sends the packet to enable the step counter

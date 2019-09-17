@@ -87,6 +87,7 @@ const byte CHANNEL_GYRO = 5;
 #define SENSOR_REPORTID_GRAVITY 0x06
 #define SENSOR_REPORTID_GAME_ROTATION_VECTOR 0x08
 #define SENSOR_REPORTID_GEOMAGNETIC_ROTATION_VECTOR 0x09
+#define SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR 0x2A
 #define SENSOR_REPORTID_TAP_DETECTOR 0x10
 #define SENSOR_REPORTID_STEP_COUNTER 0x11
 #define SENSOR_REPORTID_STABILITY_CLASSIFIER 0x13
@@ -258,6 +259,7 @@ private:
 	uint16_t rawGyroX, rawGyroY, rawGyroZ, gyroAccuracy;
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
+	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
 	uint16_t stepCount;
 	uint32_t timeStamp;
 	uint8_t stabilityClassifier;
@@ -275,4 +277,5 @@ private:
 	int16_t linear_accelerometer_Q1 = 8;
 	int16_t gyro_Q1 = 9;
 	int16_t magnetometer_Q1 = 4;
+	int16_t angular_velocity_Q1 = 10;
 };
