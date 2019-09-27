@@ -157,6 +157,7 @@ public:
 	void enableRawAccelerometer(uint16_t timeBetweenReports);
 	void enableRawGyro(uint16_t timeBetweenReports);
 	void enableRawMagnetometer(uint16_t timeBetweenReports);
+	void enableGyroIntegratedRotationVector(uint16_t timeBetweenReports);
 
 	bool dataAvailable(void);
 	void parseInputReport(void);   //Parse sensor readings out of report
@@ -183,6 +184,10 @@ public:
 	float getGyroY();
 	float getGyroZ();
 	uint8_t getGyroAccuracy();
+
+	float getFastGyroX();
+	float getFastGyroY();
+	float getFastGyroZ();
 
 	float getMagX();
 	float getMagY();

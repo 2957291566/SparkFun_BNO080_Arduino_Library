@@ -88,8 +88,8 @@ void loop()
     float quatK = myIMU.getQuatK();
     float quatReal = myIMU.getQuatReal();
     float gyroX = myIMU.getFastGyroX();
-    float gyroY = myIMU.getFastGyroX();
-    float gyroZ = myIMU.getFastGyroX();
+    float gyroY = myIMU.getFastGyroY();
+    float gyroZ = myIMU.getFastGyroZ();
 
     measurements++;
 

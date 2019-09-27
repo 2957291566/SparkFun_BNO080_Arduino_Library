@@ -507,22 +507,22 @@ uint8_t BNO080::getMagAccuracy()
 // Return the high refresh rate gyro component
 float BNO080::getFastGyroX()
 {
-	float gyro = qToFloat(rawGyroAngVelX, angular_velocity_Q1);
-	return (gyro)
+	float gyro = qToFloat(rawFastGyroX, angular_velocity_Q1);
+	return (gyro);
 }
 
 // Return the high refresh rate gyro component
 float BNO080::getFastGyroY()
 {
-	float gyro = qToFloat(rawGyroAngVelY, angular_velocity_Q1);
-	return (gyro)
+	float gyro = qToFloat(rawFastGyroY, angular_velocity_Q1);
+	return (gyro);
 }
 
 // Return the high refresh rate gyro component
 float BNO080::getFastGyroZ()
 {
-	float gyro = qToFloat(rawGyroAngVelZ, angular_velocity_Q1);
-	return (gyro)
+	float gyro = qToFloat(rawFastGyroZ, angular_velocity_Q1);
+	return (gyro);
 }
 
 //Return the step count
