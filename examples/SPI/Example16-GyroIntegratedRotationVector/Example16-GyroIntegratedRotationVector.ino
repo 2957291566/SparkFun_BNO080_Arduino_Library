@@ -70,19 +70,16 @@ void setup()
   //The IMU is now connected over SPI
   //Please see the other examples for library functions that you can call
 
-  myIMU.enableRotationVector(50); //Send data update every 50ms
+  myIMU.enableGyroIntegratedRotationVector(1); //Send data update every 1ms
 
-  Serial.println(F("Rotation vector enabled"));
-  Serial.println(F("Output in form i, j, k, real, accuracy"));
+  Serial.println(F("Gyro-Integrated Rotation vector enabled at 1000Hz"));
+  Serial.println(F("Output in form i, j, k, real, gyrox, gyroy, gyroz, refreshrate"));
 
   startTime = millis();
 }
 
 void loop()
-{
-  Serial.println("Doing other things");
-  delay(10); //You can do many other things. We spend most of our time printing and delaying.
-  
+{  
   //Look for reports from the IMU
   if (myIMU.dataAvailable() == true)
   {
@@ -90,23 +87,32 @@ void loop()
     float quatJ = myIMU.getQuatJ();
     float quatK = myIMU.getQuatK();
     float quatReal = myIMU.getQuatReal();
-    float quatRadianAccuracy = myIMU.getQuatRadianAccuracy();
+    float gyroX = myIMU.getFastGyroX();
+    float gyroY = myIMU.getFastGyroY();
+    float gyroZ = myIMU.getFastGyroZ();
+
     measurements++;
 
-    Serial.print(quatI, 2);
-    Serial.print(F(","));
-    Serial.print(quatJ, 2);
-    Serial.print(F(","));
-    Serial.print(quatK, 2);
-    Serial.print(F(","));
-    Serial.print(quatReal, 2);
-    Serial.print(F(","));
-    Serial.print(quatRadianAccuracy, 2);
-    Serial.print(F(","));
-    Serial.print((float)measurements / ((millis() - startTime) / 1000.0), 2);
-    Serial.print(F("Hz"));
+    if(measurements % 100 == 0) {
+      Serial.print(quatI, 2);
+      Serial.print(F(","));
+      Serial.print(quatJ, 2);
+      Serial.print(F(","));
+      Serial.print(quatK, 2);
+      Serial.print(F(","));
+      Serial.print(quatReal, 2);
+      Serial.print(F(","));
+      
+      Serial.print(gyroX, 3);
+      Serial.print(F(","));
+      Serial.print(gyroY, 3);
+      Serial.print(F(","));
+      Serial.print(gyroZ, 3);
+      Serial.println();
 
-    Serial.println();
+      Serial.print((float)measurements / ((millis() - startTime) / 1000.0), 2);
+      Serial.print(F("Hz"));
+    }
   }
   
 }
