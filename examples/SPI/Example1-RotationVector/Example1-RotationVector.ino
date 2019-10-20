@@ -33,6 +33,7 @@
   7 = !RST
   3.3V = 3V3
   GND = GND
+
 */
 
 #include <SPI.h>
@@ -46,22 +47,13 @@ byte imuWAKPin = 9;
 byte imuINTPin = 8;
 byte imuRSTPin = 7;
 
-unsigned long startTime; //Used for calc'ing Hz
-long measurements = 0; //Used for calc'ing Hz
-
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println();
   Serial.println("BNO080 SPI Read Example");
 
-  myIMU.enableDebugging(Serial); //Pipe debug messages to Serial port
-  
-  if(myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin) == false)
-  {
-    Serial.println("BNO080 over SPI not detected. Are you sure you have all 6 connections? Freezing...");
-    while(1);
-  }
+  myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin);
 
   //You can also call begin with SPI clock speed and SPI port hardware
   //myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin, 1000000);
@@ -74,15 +66,10 @@ void setup()
 
   Serial.println(F("Rotation vector enabled"));
   Serial.println(F("Output in form i, j, k, real, accuracy"));
-
-  startTime = millis();
 }
 
 void loop()
 {
-  Serial.println("Doing other things");
-  delay(10); //You can do many other things. We spend most of our time printing and delaying.
-  
   //Look for reports from the IMU
   if (myIMU.dataAvailable() == true)
   {
@@ -91,7 +78,6 @@ void loop()
     float quatK = myIMU.getQuatK();
     float quatReal = myIMU.getQuatReal();
     float quatRadianAccuracy = myIMU.getQuatRadianAccuracy();
-    measurements++;
 
     Serial.print(quatI, 2);
     Serial.print(F(","));
@@ -103,10 +89,8 @@ void loop()
     Serial.print(F(","));
     Serial.print(quatRadianAccuracy, 2);
     Serial.print(F(","));
-    Serial.print((float)measurements / ((millis() - startTime) / 1000.0), 2);
-    Serial.print(F("Hz"));
 
     Serial.println();
   }
-  
 }
+
